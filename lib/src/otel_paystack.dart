@@ -1,15 +1,16 @@
-// Licensed under the Dartastic Pro Software License Agreement.
+// Licensed under the Apache License, Version 2.0
 // Copyright 2025-2026 Mindful Software LLC d/b/a Dartastic.io, All rights reserved.
 
-import 'package:dartastic_opentelemetry/dartastic_opentelemetry.dart';
+import 'package:dartastic_opentelemetry_api/dartastic_opentelemetry_api.dart';
 
 import 'otel_paystack_suppression.dart';
 
 const _tracerName = 'dartastic_otel_libs_paystack';
 
-Tracer _tracer() => OTel.tracerProvider().getTracer(_tracerName);
+APITracer _tracer() => OTelAPI.tracerProvider().getTracer(_tracerName);
 
 class PaystackResult {
+  /// Creates a result.
   const PaystackResult({
     this.environment,
     this.reference,
@@ -97,8 +98,13 @@ class PaystackResult {
   final int? statusCode;
 }
 
+/// What a traced call returned: the value for the caller plus fields
+/// recorded on the span.
 class PaystackCallResult<T> {
+  /// Creates a call result.
   const PaystackCallResult({required this.value, this.result});
+
+  /// The value returned to the caller.
   final T value;
   final PaystackResult? result;
 }
@@ -129,7 +135,7 @@ Future<T> tracedPaystack<T>({
   final span = _tracer().startSpan(
     'paystack $operation',
     kind: SpanKind.client,
-    attributes: OTel.attributesFromMap(m),
+    attributes: OTelAPI.attributesFromMap(m),
   );
   try {
     final r = await invoke();
@@ -137,70 +143,71 @@ Future<T> tracedPaystack<T>({
       final res = r.result!;
       final extras = <Attribute<Object>>[];
       if (res.environment != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'paystack.environment',
           res.environment!,
         ));
       }
       if (res.reference != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'paystack.reference',
           res.reference!,
         ));
       }
       if (res.amountSubunits != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'paystack.amount.subunits',
           res.amountSubunits!,
         ));
       }
       if (res.currency != null) {
-        extras.add(OTel.attributeString('paystack.currency', res.currency!));
+        extras.add(OTelAPI.attributeString('paystack.currency', res.currency!));
       }
       if (res.country != null) {
-        extras.add(OTel.attributeString('paystack.country', res.country!));
+        extras.add(OTelAPI.attributeString('paystack.country', res.country!));
       }
       if (res.channel != null) {
-        extras.add(OTel.attributeString('paystack.channel', res.channel!));
+        extras.add(OTelAPI.attributeString('paystack.channel', res.channel!));
       }
       if (res.cardNetwork != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'paystack.card.network',
           res.cardNetwork!,
         ));
       }
       if (res.cardBin != null) {
-        extras.add(OTel.attributeString('paystack.card.bin', res.cardBin!));
+        extras.add(OTelAPI.attributeString('paystack.card.bin', res.cardBin!));
       }
       if (res.cardLast4 != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'paystack.card.last4',
           res.cardLast4!,
         ));
       }
       if (res.cardAuthorizationCode != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'paystack.card.authorization_code',
           res.cardAuthorizationCode!,
         ));
       }
       if (res.cardReusable != null) {
-        extras.add(OTel.attributeBool(
+        extras.add(OTelAPI.attributeBool(
           'paystack.card.reusable',
           res.cardReusable!,
         ));
       }
       if (res.bankCode != null) {
-        extras.add(OTel.attributeString('paystack.bank.code', res.bankCode!));
+        extras
+            .add(OTelAPI.attributeString('paystack.bank.code', res.bankCode!));
       }
       if (res.transferRecipientCode != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'paystack.transfer.recipient_code',
           res.transferRecipientCode!,
         ));
       }
       if (res.transactionStatus != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'paystack.transaction.status',
           res.transactionStatus!,
         ));
@@ -213,47 +220,48 @@ Future<T> tracedPaystack<T>({
         }
       }
       if (res.gatewayResponse != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'paystack.gateway.response',
           res.gatewayResponse!,
         ));
       }
       if (res.feesSubunits != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'paystack.fees.subunits',
           res.feesSubunits!,
         ));
       }
       if (res.subaccountCode != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'paystack.subaccount.code',
           res.subaccountCode!,
         ));
       }
       if (res.planCode != null) {
-        extras.add(OTel.attributeString('paystack.plan.code', res.planCode!));
+        extras
+            .add(OTelAPI.attributeString('paystack.plan.code', res.planCode!));
       }
       if (res.subscriptionCode != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'paystack.subscription.code',
           res.subscriptionCode!,
         ));
       }
       if (res.subscriptionStatus != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'paystack.subscription.status',
           res.subscriptionStatus!,
         ));
       }
       if (res.errorCode != null) {
-        extras.add(OTel.attributeString(
+        extras.add(OTelAPI.attributeString(
           'paystack.error.code',
           res.errorCode!,
         ));
         span.setStatus(SpanStatusCode.Error, 'Paystack ${res.errorCode}');
       }
       if (res.statusCode != null) {
-        extras.add(OTel.attributeInt(
+        extras.add(OTelAPI.attributeInt(
           'http.response.status_code',
           res.statusCode!,
         ));
@@ -264,13 +272,13 @@ Future<T> tracedPaystack<T>({
           );
         }
       }
-      if (extras.isNotEmpty) span.addAttributes(OTel.attributes(extras));
+      if (extras.isNotEmpty) span.addAttributes(OTelAPI.attributes(extras));
     }
     return r.value;
   } catch (e, st) {
-    span.addAttributes(OTel.attributes([
-      OTel.attributeString(
-        ErrorResource.errorType.key,
+    span.addAttributes(OTelAPI.attributes([
+      OTelAPI.attributeString(
+        ErrorAttributes.errorType.key,
         e.runtimeType.toString(),
       ),
     ]));
